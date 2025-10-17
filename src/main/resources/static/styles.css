@@ -8,13 +8,52 @@ body {
     background-color: #e6f7ff;
     color: #333;
     font-family: 'Inter', sans-serif;
+    padding: 20px;
 }
 
 h2 {
     margin-top: 10px;
     margin-bottom: 20px;
-    color: #004d40;
+    color: #003366;
+    text-align: center;
+    width: 100%;
 }
+
+.controls-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px; /* Espacio antes del siguiente h2/canvas */
+}
+
+label, input, button {
+    margin: 8px;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 16px;
+    display: inline-block;
+}
+
+input#drawingId {
+    border: 1px solid #a8c0d8;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input#drawingId:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+button {
+    background-color: #003366;
+    cursor: pointer;
+    font-weight: bold;
+    color: white;
+    border: none;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
 
 #canvas {
     border: 2px solid #a8c0d8;
@@ -24,4 +63,3 @@ h2 {
     touch-action: none;
     -ms-touch-action: none;
 }
-
