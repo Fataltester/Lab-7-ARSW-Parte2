@@ -17,6 +17,18 @@ var app = (function () {
         ctx.arc(point.x, point.y, 1, 0, 2 * Math.PI);
         ctx.stroke();
     };
+    var drawPolygon = function(points) {
+        if (points.length < 3) return;
+        var canvas = document.getElementById("canvas");
+        var ctx = canvas.getContext("2d");
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, points[0].y);
+        for (var i = 1; i < points.length; i++) {
+            ctx.lineTo(points[i].x, points[i].y);
+        }
+        ctx.closePath(); // conecta el último punto con el primero
+        ctx.stroke();
+    };
 
     var getMousePosition = function (evt) {
         var canvas = document.getElementById("canvas");
@@ -40,11 +52,18 @@ var app = (function () {
 
             // Suscribirse al tópico /topic/newpoint
             stompClient.subscribe(topic, function (message) {
+                console.log("Mensaje recibido desde el servidor:", message.body);
                 // Extraer el contenido del mensaje
                 var theObject = JSON.parse(message.body);
 
                 // Mostrar el canvas actualizado
                 addPointToCanvas(theObject);
+            });
+            // Suscribirse al topico /topic/newpolygon
+            var topicPoligonos = `/topic/newpolygon.${drawingId}`;
+            stompClient.subscribe(topicPoligonos, function(message) {
+                var polygonPoints = JSON.parse(message.body); // array de puntos
+                drawPolygon(polygonPoints);
             });
         });
     };
@@ -58,7 +77,7 @@ var app = (function () {
 
         var pt = new Point(x, y);
         addPointToCanvas(pt);
-        var topic = `/topic/newpoint.${drawingId}`;
+        var topic = `/app/newpoint.${drawingId}`;
         stompClient.send(topic, {}, JSON.stringify(pt));
         console.info(`Punto enviado a ${topic}: `, pt);
     };
