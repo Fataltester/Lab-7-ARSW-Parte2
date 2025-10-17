@@ -90,35 +90,43 @@ Para ver cómo manejar esto desde el manejador de eventos STOMP del servidor, re
 
 1. Cree una nueva clase que haga el papel de 'Controlador' para ciertos mensajes STOMP (en este caso, aquellos enviados a través de "/app/newpoint.{numdibujo}"). A este controlador se le inyectará un bean de tipo SimpMessagingTemplate, un Bean de Spring que permitirá publicar eventos en un determinado tópico. Por ahora, se definirá que cuando se intercepten los eventos enviados a "/app/newpoint.{numdibujo}" (que se supone deben incluir un punto), se mostrará por pantalla el punto recibido, y luego se procederá a reenviar el evento al tópico al cual están suscritos los clientes "/topic/newpoint".
 
-	```java
-	
-	@Controller
-	public class STOMPMessagesHandler {
-		
-		@Autowired
-		SimpMessagingTemplate msgt;
-	    
-		@MessageMapping("/newpoint.{numdibujo}")    
-		public void handlePointEvent(Point pt,@DestinationVariable String numdibujo) throws Exception {
-			System.out.println("Nuevo punto recibido en el servidor!:"+pt);
-			msgt.convertAndSend("/topic/newpoint"+numdibujo, pt);
-		}
-	}
+	<img width="989" height="340" alt="image" src="https://github.com/user-attachments/assets/c7b24e43-a2ac-476b-9dd7-e2b9cf36b523" />
 
-	```
 
 2. Ajuste su cliente para que, en lugar de publicar los puntos en el tópico /topic/newpoint.{numdibujo}, lo haga en /app/newpoint.{numdibujo}. Ejecute de nuevo la aplicación y rectifique que funcione igual, pero ahora mostrando en el servidor los detalles de los puntos recibidos.
 
+   Se ajusto en el archivo js las rutas en los lugares correctos, en suscribirse usamos la ruta /topic mientras que en public utilizamos /app
+   
+   <img width="1094" height="569" alt="image" src="https://github.com/user-attachments/assets/ba908301-53ab-4189-90c9-72bb22a5a1ca" />
+
+
 3. Una vez rectificado el funcionamiento, se quiere aprovechar este 'interceptor' de eventos para cambiar ligeramente la funcionalidad:
 
-	1. Se va a manejar un nuevo tópico llamado '/topic/newpolygon.{numdibujo}', en donde el lugar de puntos, se recibirán objetos javascript que tengan como propiedad un conjunto de puntos.
-	2. El manejador de eventos de /app/newpoint.{numdibujo}, además de propagar los puntos a través del tópico '/topic/newpoints', llevará el control de los puntos recibidos(que podrán haber sido dibujados por diferentes clientes). Cuando se completen tres o más puntos, publicará el polígono en el tópico '/topic/newpolygon'. Recuerde que esto se realizará concurrentemente, de manera que REVISE LAS POSIBLES CONDICIONES DE CARRERA!. También tenga en cuenta que desde el manejador de eventos del servidor se tendrán N dibujos independientes!.
+i. Se va a manejar un nuevo tópico llamado '/topic/newpolygon.{numdibujo}', en donde el lugar de puntos, se recibirán objetos javascript que tengan como propiedad un conjunto de puntos.
 
-	3. El cliente, ahora también se suscribirá al tópico '/topic/newpolygon'. El 'callback' asociado a la recepción de eventos en el mismo debe, con los datos recibidos, dibujar un polígono, [tal como se muestran en ese ejemplo](http://www.arungudelli.com/html5/html5-canvas-polygon/).
-	4. Verifique la funcionalidad: igual a la anterior, pero ahora dibujando polígonos cada vez que se agreguen cuatro puntos.
+<img width="943" height="464" alt="image" src="https://github.com/user-attachments/assets/6e55eb1b-8eae-4ecc-af1a-a4a502ae433b" />
+
+ii. El manejador de eventos de /app/newpoint.{numdibujo}, además de propagar los puntos a través del tópico '/topic/newpoints', llevará el control de los puntos recibidos(que podrán haber sido dibujados por diferentes clientes). Cuando se completen tres o más puntos, publicará el polígono en el tópico '/topic/newpolygon'. Recuerde que esto se realizará concurrentemente, de manera que REVISE LAS POSIBLES CONDICIONES DE CARRERA!. También tenga en cuenta que desde el manejador de eventos del servidor se tendrán N dibujos independientes!.
+
+Las posibles condiciones de carrera es que varios clientes actualicen el almacenamiento de los puntos por lo que se pueden dar las condiciones de carrera, por eso utilizamos una estructira de datos sincronizada, por lo que en la imagen anterior se evidencia que llevamos el control de los puntos añadidos y evitamos la condición de carrera mencionada. 
 	
+iii. El cliente, ahora también se suscribirá al tópico '/topic/newpolygon'. El 'callback' asociado a la recepción de eventos en el mismo debe, con los datos recibidos, dibujar un polígono, [tal como se muestran en ese ejemplo](http://www.arungudelli.com/html5/html5-canvas-polygon/).
+
+<img width="812" height="151" alt="image" src="https://github.com/user-attachments/assets/1ab0847e-b9ba-42c7-8c83-a3777f32beba" />
+
+<img width="838" height="269" alt="image" src="https://github.com/user-attachments/assets/832da2d8-a2ec-446b-937d-18982d856fc3" />
+
+iv. Verifique la funcionalidad: igual a la anterior, pero ahora dibujando polígonos cada vez que se agreguen cuatro puntos.
+
+<img width="1600" height="872" alt="image" src="https://github.com/user-attachments/assets/933f50d4-1ef2-4265-b30c-39b8cc03859a" />
+
 	
-5. A partir de los diagramas dados en el archivo ASTAH incluido, haga un nuevo diagrama de actividades correspondiente a lo realizado hasta este punto, teniendo en cuenta el detalle de que ahora se tendrán tópicos dinámicos para manejar diferentes dibujos simultáneamente.
+4. A partir de los diagramas dados en el archivo ASTAH incluido, haga un nuevo diagrama de actividades correspondiente a lo realizado hasta este punto, teniendo en cuenta el detalle de que ahora se tendrán tópicos dinámicos para manejar diferentes dibujos simultáneamente.
+
+Para representar el tópico dinámico, especificamos un "Join Node" para representar la sincronización que se da sobre la lista ya que los demás diagramas describían el estado actual del flujo de actividades pero no tenían en cuenta ese cambio.
+
+<img width="799" height="435" alt="image" src="https://github.com/user-attachments/assets/24079333-a44c-4fb1-8277-a9f37b3be1cc" />
+
 
 5. Haga commit de lo realizado.
 
