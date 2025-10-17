@@ -1,1 +1,27 @@
+body {
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #e6f7ff;
+    color: #333;
+    font-family: 'Inter', sans-serif;
+}
+
+h2 {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    color: #004d40;
+}
+
+#canvas {
+    border: 2px solid #a8c0d8;
+    border-radius: 8px;
+    background-color: #f1f8e9;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    touch-action: none;
+    -ms-touch-action: none;
+}
 

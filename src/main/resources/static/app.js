@@ -13,8 +13,17 @@ var app = (function () {
         var canvas = document.getElementById("canvas");
         var ctx = canvas.getContext("2d");
         ctx.beginPath();
-        ctx.arc(point.x, point.y, 3, 0, 2 * Math.PI);
+        ctx.arc(point.x, point.y, 1, 0, 2 * Math.PI);
         ctx.stroke();
+    };
+
+    var getMousePosition = function (evt) {
+        canvas = document.getElementById("canvas");
+        var rect = canvas.getBoundingClientRect();
+        return {
+            x: evt.clientX - rect.left,
+            y: evt.clientY - rect.top
+        };
     };
 
     var connectAndSubscribe = function () {
@@ -31,12 +40,8 @@ var app = (function () {
                 // Extraer el contenido del mensaje
                 var theObject = JSON.parse(message.body);
 
-                // Mostrar en una alerta las coordenadas recibidas
-                alert("Nuevo punto recibido: X=" + theObject.x + " Y=" + theObject.y);
-
-                if (polygonObj.points && polygonObj.points.length > 0) {
-                    addPointToCanvas(receivedPoint);
-                }
+                // Mostrar el canvas actualizado
+                addPointToCanvas(theObject);
             });
         });
     };
@@ -47,6 +52,12 @@ var app = (function () {
 
             //websocket connection
             connectAndSubscribe();
+
+            // Asociar evento de clic al canvas
+            canvas.addEventListener("click", function (evt) {
+                var pos = getMousePosition(evt);
+                app.publishPoint(pos.x, pos.y);
+            });
         },
 
         publishPoint: function (px, py) {
