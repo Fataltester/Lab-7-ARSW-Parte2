@@ -1,88 +1,81 @@
 ### Escuela Colombiana de Ingeniería
-### Arquitecturas de Software - ARSW
-### Laboratorio - Broker de Mensajes STOMP con WebSockets + HTML5 Canvas.
+### Arquiecturas de Software
+## Integrantes:
+### Juan David Martínez Mendez
+### Santiago Gualdrón Rincón
 
-
-
-- Conectarse con un botón
-- publicar con eventos de mouse
-
-var newpoint = JSON.parse(greeting.body);
-                addPointToCanvas(newpoint);
-
-
-stompClient.send("/topic/newpoint", {}, JSON.stringify(pt));  				
-
-
-Este ejercicio se basa en la documentación oficial de SprinbBoot, para el [manejo de WebSockets con STOMP](https://spring.io/guides/gs/messaging-stomp-websocket/).
-
-En este repositorio se encuentra una aplicación SpringBoot que está configurado como Broker de mensajes, de forma similar a lo mostrado en la siguiente figura:
-
-![](https://docs.spring.io/spring/docs/current/spring-framework-reference/images/message-flow-simple-broker.png)
-
-En este caso, el manejador de mensajes asociado a "/app" aún no está configurado, pero sí lo está el broker '/topic'. Como mensaje, se usarán puntos, pues se espera que esta aplicación permita progragar eventos de dibujo de puntos generados por los diferentes clientes.
+## Laboratorio - Broker de Mensajes STOMP con WebSockets + HTML5 Canvas.
 
 ## Parte I.
 
-Para las partes I y II, usted va a implementar una herramienta de dibujo colaborativo Web, basada en el siguiente diagrama de actividades:
-
-![](img/P1-AD.png)
-
-Para esto, realice lo siguiente:
-
 1. Haga que la aplicación HTML5/JS al ingresarle en los campos de X y Y, además de graficarlos, los publique en el tópico: /topic/newpoint . Para esto tenga en cuenta (1) usar el cliente STOMP creado en el módulo de JavaScript y (2) enviar la representación textual del objeto JSON (usar JSON.stringify). Por ejemplo:
-
-	```javascript
-	//creando un objeto literal
-	stompClient.send("/topic/newpoint", {}, JSON.stringify({x:10,y:10}));
-	```
 
 	```javascript
 	//enviando un objeto creado a partir de una clase
 	stompClient.send("/topic/newpoint", {}, JSON.stringify(pt)); 
 	```
 
+<img width="598" height="668" alt="image" src="https://github.com/user-attachments/assets/97b2341b-0a39-4410-9093-2b97aa572941" />
+
 2. Dentro del módulo JavaScript modifique la función de conexión/suscripción al WebSocket, para que la aplicación se suscriba al tópico "/topic/newpoint" (en lugar del tópico /TOPICOXX). Asocie como 'callback' de este suscriptor una función que muestre en un mensaje de alerta (alert()) el evento recibido. Como se sabe que en el tópico indicado se publicarán sólo puntos, extraiga el contenido enviado con el evento (objeto JavaScript en versión de texto), conviértalo en objeto JSON, y extraiga de éste sus propiedades (coordenadas X y Y). Para extraer el contenido del evento use la propiedad 'body' del mismo, y para convertirlo en objeto, use JSON.parse. Por ejemplo:
 
 	```javascript
 	var theObject=JSON.parse(message.body);
 	```
+ 
+ <img width="722" height="529" alt="image" src="https://github.com/user-attachments/assets/bd12edbe-4cf9-4ffa-a9f1-e819b5bc72c1" />
+
 3. Compile y ejecute su aplicación. Abra la aplicación en varias pestañas diferentes (para evitar problemas con el caché del navegador, use el modo 'incógnito' en cada prueba).
+
+	<img width="712" height="589" alt="image" src="https://github.com/user-attachments/assets/ee04baff-5e69-4fdf-a0de-97e9e3a24940" />
+
 4. Ingrese los datos, ejecute la acción del botón, y verifique que en todas la pestañas se haya lanzado la alerta con los datos ingresados.
 
-5. Haga commit de lo realizado, para demarcar el avance de la parte 2.
+   <img width="1007" height="589" alt="image" src="https://github.com/user-attachments/assets/d39b37f1-838f-49d4-84ad-b13d7f9345ed" />
+	
+	<img width="1015" height="619" alt="image" src="https://github.com/user-attachments/assets/8c8df716-a754-4ffc-9023-9ef56718af0d" />
 
-	```bash
-	git commit -m "PARTE 1".
-	```
-
+	<img width="1081" height="614" alt="image" src="https://github.com/user-attachments/assets/03bc826c-a5b9-4cb5-b565-e62e36345c47" />
 
 ## Parte II.
 
-Para hacer mas útil la aplicación, en lugar de capturar las coordenadas con campos de formulario, las va a capturar a través de eventos sobre un elemento de tipo \<canvas>. De la misma manera, en lugar de simplemente mostrar las coordenadas enviadas en los eventos a través de 'alertas', va a dibujar dichos puntos en el mismo canvas. Haga uso del mecanismo de captura de eventos de mouse/táctil usado en ejercicios anteriores con este fin.
-
 1. Haga que el 'callback' asociado al tópico /topic/newpoint en lugar de mostrar una alerta, dibuje un punto en el canvas en las coordenadas enviadas con los eventos recibidos. Para esto puede [dibujar un círculo de radio 1](http://www.w3schools.com/html/html5_canvas.asp).
-4. Ejecute su aplicación en varios navegadores (y si puede en varios computadores, accediendo a la aplicación mendiante la IP donde corre el servidor). Compruebe que a medida que se dibuja un punto, el mismo es replicado en todas las instancias abiertas de la aplicación.
 
-5. Haga commit de lo realizado, para marcar el avance de la parte 2.
+<img width="671" height="600" alt="image" src="https://github.com/user-attachments/assets/65c24e93-099d-4460-bb3d-ec3f34fbca7a" />
 
-	```bash
-	git commit -m "PARTE 2".
-	```
+2. Ejecute su aplicación en varios navegadores (y si puede en varios computadores, accediendo a la aplicación mendiante la IP donde corre el servidor). Compruebe que a medida que se dibuja un punto, el mismo es replicado en todas las instancias abiertas de la aplicación.
+
+<img width="1251" height="760" alt="image" src="https://github.com/user-attachments/assets/40c605e9-e20a-4aee-be13-68afc67bffb1" />
+
+<img width="1210" height="773" alt="image" src="https://github.com/user-attachments/assets/01b98f62-970a-45ed-b548-b2a3d8501539" />
+
+prueba 2 
+
+<img width="1176" height="769" alt="image" src="https://github.com/user-attachments/assets/1fac3e6e-6ecb-461a-88c9-4998f262ca01" />
+
+<img width="1179" height="779" alt="image" src="https://github.com/user-attachments/assets/1124743d-1446-420d-95aa-079b984c987c" />
 
 ## Parte III.
 
 Ajuste la aplicación anterior para que pueda manejar más de un dibujo a la vez, manteniendo tópicos independientes. Para esto:
 
 1. Agregue un campo en la vista, en el cual el usuario pueda ingresar un número. El número corresponderá al identificador del dibujo que se creará.
+
+<img width="699" height="224" alt="image" src="https://github.com/user-attachments/assets/37c2297a-cbed-4730-9bac-aa8f91a1832c" />
+
 2. Modifique la aplicación para que, en lugar de conectarse y suscribirse automáticamente (en la función init()), lo haga a través de botón 'conectarse'. Éste, al oprimirse debe realizar la conexión y suscribir al cliente a un tópico que tenga un nombre dinámico, asociado el identificador ingresado, por ejemplo: /topic/newpoint.25, topic/newpoint.80, para los dibujos 25 y 80 respectivamente.
+
+<img width="982" height="891" alt="image" src="https://github.com/user-attachments/assets/9683dc42-aa88-46b8-b990-9f62c9a38048" />
+
 3. De la misma manera, haga que las publicaciones se realicen al tópico asociado al identificador ingresado por el usuario.
+
+<img width="990" height="761" alt="image" src="https://github.com/user-attachments/assets/c303b2f0-d171-483d-ba54-18425d90689f" />
+
 4. Rectifique que se puedan realizar dos dibujos de forma independiente, cada uno de éstos entre dos o más clientes.
 
-	```bash
-	git commit -m "PARTE 3".
-	```
+<img width="1600" height="900" alt="image" src="https://github.com/user-attachments/assets/8d9319fd-76c4-4a42-9800-f0a8395701dd" />
 
+<img width="1600" height="900" alt="image" src="https://github.com/user-attachments/assets/406b9972-2a26-470a-b4f2-df95def00ba3" />
 
 ## Parte IV.
 
